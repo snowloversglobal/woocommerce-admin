@@ -4,7 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { Fragment, Component } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
-import { get, filter, noop, keys, pickBy, difference } from 'lodash';
+import { get, filter, noop, keys, pickBy, difference, some } from 'lodash';
 import { Button, FormToggle, CheckboxControl } from '@wordpress/components';
 import { withDispatch } from '@wordpress/data';
 
@@ -231,7 +231,9 @@ class Payments extends Component {
 	getMethodOptions() {
 		const { getInputProps } = this.formData;
 		const { countryCode, profileItems } = this.props;
-
+		const industryIsCBD = some( profileItems.industry, {
+			slug: 'cbd-other-hemp-derived-products',
+		} );
 		const methods = [
 			{
 				key: 'stripe',
@@ -251,7 +253,7 @@ class Payments extends Component {
 				),
 				before: <img src={ wcAssetUrl + 'images/stripe.png' } alt="" />,
 				after: <FormToggle { ...getInputProps( 'stripe' ) } />,
-				visible: this.isStripeEnabled(),
+				visible: this.isStripeEnabled() && ! industryIsCBD,
 			},
 			{
 				key: 'paypal',
@@ -266,7 +268,7 @@ class Payments extends Component {
 				),
 				before: <img src={ wcAssetUrl + 'images/paypal.png' } alt="" />,
 				after: <FormToggle { ...getInputProps( 'paypal' ) } />,
-				visible: true,
+				visible: true && ! industryIsCBD,
 			},
 			{
 				key: 'klarna_checkout',
@@ -282,7 +284,9 @@ class Payments extends Component {
 					/>
 				),
 				after: <FormToggle { ...getInputProps( 'klarna_checkout' ) } />,
-				visible: [ 'SE', 'FI', 'NO', 'NL' ].includes( countryCode ),
+				visible:
+					[ 'SE', 'FI', 'NO', 'NL' ].includes( countryCode ) &&
+					! industryIsCBD,
 			},
 			{
 				key: 'klarna_payments',
@@ -298,7 +302,9 @@ class Payments extends Component {
 					/>
 				),
 				after: <FormToggle { ...getInputProps( 'klarna_payments' ) } />,
-				visible: [ 'DK', 'DE', 'AT' ].includes( countryCode ),
+				visible:
+					[ 'DK', 'DE', 'AT' ].includes( countryCode ) &&
+					! industryIsCBD,
 			},
 			{
 				key: 'square',
