@@ -278,7 +278,7 @@ class Payments extends Component {
 				),
 				before: <img src={ wcAssetUrl + 'images/paypal.png' } alt="" />,
 				after: <FormToggle { ...getInputProps( 'paypal' ) } />,
-				visible: true && ! industryIsCBD,
+				visible: ! industryIsCBD,
 			},
 			{
 				key: 'klarna_checkout',
