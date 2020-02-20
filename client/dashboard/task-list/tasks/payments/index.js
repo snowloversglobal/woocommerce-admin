@@ -5,7 +5,13 @@ import { __ } from '@wordpress/i18n';
 import { Fragment, Component } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { get, filter, noop, keys, pickBy, difference, some } from 'lodash';
-import { Button, FormToggle, CheckboxControl } from '@wordpress/components';
+import {
+	Button,
+	FormToggle,
+	CheckboxControl,
+	Tooltip,
+} from '@wordpress/components';
+import Gridicon from 'gridicons';
 import { withDispatch } from '@wordpress/data';
 
 /**
@@ -50,7 +56,7 @@ class Payments extends Component {
 		);
 		this.completePluginInstall = this.completePluginInstall.bind( this );
 
-		const { methods, installed, configured } = this.props;
+		const { methods, installed, configured, profileItems } = this.props;
 
 		let step = 'choose';
 		let showIndividualConfigs = false;
@@ -78,6 +84,9 @@ class Payments extends Component {
 			step,
 			showIndividualConfigs,
 			methodRequestPending: false,
+			industryIsCBD: some( profileItems.industry, {
+				slug: 'cbd-other-hemp-derived-products',
+			} ),
 		};
 	}
 
@@ -231,9 +240,10 @@ class Payments extends Component {
 	getMethodOptions() {
 		const { getInputProps } = this.formData;
 		const { countryCode, profileItems } = this.props;
-		const industryIsCBD = some( profileItems.industry, {
-			slug: 'cbd-other-hemp-derived-products',
-		} );
+		// const industryIsCBD = some( profileItems.industry, {
+		// 	slug: 'cbd-other-hemp-derived-products',
+		// } );
+		const { industryIsCBD } = this.state;
 		const methods = [
 			{
 				key: 'stripe',
@@ -322,10 +332,14 @@ class Payments extends Component {
 				),
 				after: <FormToggle { ...getInputProps( 'square' ) } />,
 				visible:
-					[ 'brick-mortar', 'brick-mortar-other' ].includes(
+					industryIsCBD ||
+					[ 'US' ].includes( countryCode ) ||
+					( [ 'brick-mortar', 'brick-mortar-other' ].includes(
 						profileItems.selling_venues
 					) &&
-					[ 'US', 'CA', 'JP', 'GB', 'AU' ].includes( countryCode ),
+						[ 'US', 'CA', 'JP', 'GB', 'AU' ].includes(
+							countryCode
+						) ),
 			},
 			{
 				key: 'payfast',
@@ -420,7 +434,7 @@ class Payments extends Component {
 			values.square ||
 			values.payfast;
 
-		const { showIndividualConfigs } = this.state;
+		const { showIndividualConfigs, industryIsCBD } = this.state;
 		const { activePlugins, countryCode, isJetpackConnected } = this.props;
 
 		const manualConfig =
@@ -449,6 +463,24 @@ class Payments extends Component {
 						>
 							{ __( 'Proceed', 'woocommerce-admin' ) }
 						</Button>
+						{ industryIsCBD && (
+							<Tooltip
+								text={ __(
+									'The industries CBD and other hemp-derived products are only supported by Square.',
+									'woocommerce-admin'
+								) }
+							>
+								<span>
+									<Gridicon
+										className={ 'info-tooltip' }
+										icon="info"
+										role="img"
+										aria-hidden="false"
+										focusable="false"
+									/>
+								</span>
+							</Tooltip>
+						) }
 					</Fragment>
 				),
 				visible: true,
