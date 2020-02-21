@@ -465,7 +465,7 @@ class Payments extends Component {
 						{ industryIsCBD && (
 							<Tooltip
 								text={ __(
-									'The industries CBD and other hemp-derived products are only supported by Square.',
+									'Selling CBD products is only supported by Square.',
 									'woocommerce-admin'
 								) }
 							>
