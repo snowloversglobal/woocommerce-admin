@@ -489,29 +489,43 @@ class OnboardingPlugins extends \WC_REST_Data_Controller {
 			return new WP_Error( 'woocommerce_rest_helper_connect', __( 'There was an error connecting to Square.', 'woocommerce-admin' ), 500 );
 		}
 
-		$url = \WooCommerce\Square\Handlers\Connection::CONNECT_URL_PRODUCTION;
+		if ( 'US' === WC()->countries->get_base_country() ) {
+			$profile = get_option( Onboarding::PROFILE_DATA_OPTION, array() );
+			if ( ! empty( $profile['industry'] ) ) {
+				foreach ( $profile['industry'] as $selected_industry ) {
+					if ( 'cbd-other-hemp-derived-products' === $selected_industry['slug'] ) {
+						$url  = 'https://squareup.com/t/f_partnerships/d_referrals/p_woocommerce/c_general/o_none/l_us/dt_alldevice/pr_payments/?route=/solutions/cbd';
+						$args = [];
+					}
+				}
+			}
+		}
 
-		$redirect_url = wp_nonce_url( wc_admin_url( '&task=payments&square-connect-finish=1' ), 'wc_square_connected' );
-		$args         = array(
-			'redirect' => urlencode( urlencode( $redirect_url ) ),
-			'scopes'   => implode(
-				',',
-				array(
-					'MERCHANT_PROFILE_READ',
-					'PAYMENTS_READ',
-					'PAYMENTS_WRITE',
-					'ORDERS_READ',
-					'ORDERS_WRITE',
-					'CUSTOMERS_READ',
-					'CUSTOMERS_WRITE',
-					'SETTLEMENTS_READ',
-					'ITEMS_READ',
-					'ITEMS_WRITE',
-					'INVENTORY_READ',
-					'INVENTORY_WRITE',
-				)
-			),
-		);
+		if ( ! isset( $url ) ) {
+			$url = \WooCommerce\Square\Handlers\Connection::CONNECT_URL_PRODUCTION;
+
+			$redirect_url = wp_nonce_url( wc_admin_url( '&task=payments&square-connect-finish=1' ), 'wc_square_connected' );
+			$args         = array(
+				'redirect' => urlencode( urlencode( $redirect_url ) ),
+				'scopes'   => implode(
+					',',
+					array(
+						'MERCHANT_PROFILE_READ',
+						'PAYMENTS_READ',
+						'PAYMENTS_WRITE',
+						'ORDERS_READ',
+						'ORDERS_WRITE',
+						'CUSTOMERS_READ',
+						'CUSTOMERS_WRITE',
+						'SETTLEMENTS_READ',
+						'ITEMS_READ',
+						'ITEMS_WRITE',
+						'INVENTORY_READ',
+						'INVENTORY_WRITE',
+					)
+				),
+			);
+		}
 
 		$connect_url = add_query_arg( $args, $url );
 
