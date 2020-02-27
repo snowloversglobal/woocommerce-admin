@@ -61,6 +61,11 @@ class Payments extends Component {
 		let step = 'choose';
 		let showIndividualConfigs = false;
 
+		const industryIsCBD =
+			some( profileItems.industry, {
+				slug: 'cbd-other-hemp-derived-products',
+			} ) || false;
+
 		// Figure out which step to show initially if there are still steps to be configured, or redirect back to the task list.
 		if ( methods.length > 0 && configured.length > 0 ) {
 			step = difference( methods, configured )[ 0 ] || '';
@@ -82,11 +87,9 @@ class Payments extends Component {
 
 		this.state = {
 			step,
+			industryIsCBD,
 			showIndividualConfigs,
 			methodRequestPending: false,
-			industryIsCBD: some( profileItems.industry, {
-				slug: 'cbd-other-hemp-derived-products',
-			} ),
 		};
 	}
 
@@ -240,9 +243,6 @@ class Payments extends Component {
 	getMethodOptions() {
 		const { getInputProps } = this.formData;
 		const { countryCode, profileItems } = this.props;
-		// const industryIsCBD = some( profileItems.industry, {
-		// 	slug: 'cbd-other-hemp-derived-products',
-		// } );
 		const { industryIsCBD } = this.state;
 		const methods = [
 			{
@@ -332,8 +332,7 @@ class Payments extends Component {
 				),
 				after: <FormToggle { ...getInputProps( 'square' ) } />,
 				visible:
-					industryIsCBD ||
-					[ 'US' ].includes( countryCode ) ||
+					( industryIsCBD && [ 'US' ].includes( countryCode ) ) ||
 					( [ 'brick-mortar', 'brick-mortar-other' ].includes(
 						profileItems.selling_venues
 					) &&
