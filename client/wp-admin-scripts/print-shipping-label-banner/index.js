@@ -4,6 +4,7 @@
 import { __, sprintf, _n } from '@wordpress/i18n';
 import { render, Component } from '@wordpress/element';
 import { ExternalLink, Button } from '@wordpress/components';
+import { trackBannerEvent } from './lib/banner-tracks';
 
 /**
  * Internal dependencies
@@ -26,10 +27,14 @@ class ShippingBanner extends Component {
 		};
 	}
 
-	closeDismissModal = () => this.setState( { isDismissModalOpen: false } );
+	closeDismissModal = () => {
+		this.setState( { isDismissModalOpen: false } );
+		trackBannerEvent('shipping_banner_dismiss_modal_close_button_click');
+	}
+
 	openDismissModal = () => {
 		this.setState( { isDismissModalOpen: true } );
-		// TODO: tracking
+		trackBannerEvent( 'shipping_banner_dimiss_click' );
 	};
 
 	hideBanner = () => {
@@ -39,7 +44,11 @@ class ShippingBanner extends Component {
 	createShippingLabelClicked = () => {
 		// TODO: install and activate WCS
 		// TODO: open WCS modal
-		// TODO: Tracking
+		trackBannerEvent( 'shipping_banner_create_label_click' );
+	};
+
+	learnMoreClicked = () => {
+		trackBannerEvent( 'shipping_banner_learn_more_click' );
 	};
 
 	render() {
@@ -48,6 +57,8 @@ class ShippingBanner extends Component {
 		if ( ! showShippingBanner ) {
 			return null;
 		}
+
+		trackBannerEvent( 'shipping_banner_show' );
 
 		return (
 			<div>
@@ -65,7 +76,7 @@ class ShippingBanner extends Component {
 						{ __(
 							'Print discounted shipping labels with a click. This will install WooCommerce Services. '
 						) }
-						<ExternalLink href="woocommerce.com">
+						<ExternalLink href="woocommerce.com" onClick={ this.learnMoreClicked }>
 							{ __('Learn More', 'woocommerce-admin' ) }
 						</ExternalLink>
 					</p>
