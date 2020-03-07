@@ -18,8 +18,7 @@ export default class DismissModal extends Component {
 		// TODO: Maybe set counter for when to show again, or just show on next page load.
 
 		trackBannerEvent(
-			'shipping_banner_dismiss_modal_remind_me_later_click',
-			this.props
+			'shipping_banner_dismiss_modal_remind_me_later_click'
 		);
 	};
 
@@ -27,10 +26,7 @@ export default class DismissModal extends Component {
 		const { onCloseAll } = this.props;
 		// TODO: Persist something so the banner never appears again.
 		onCloseAll();
-		trackBannerEvent(
-			'shipping_banner_dismiss_modal_close_forever_click',
-			this.props
-		);
+		trackBannerEvent( 'shipping_banner_dismiss_modal_close_forever_click' );
 	};
 
 	render() {
