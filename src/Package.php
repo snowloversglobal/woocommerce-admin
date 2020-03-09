@@ -36,6 +36,13 @@ class Package {
 	private static $package_active = false;
 
 	/**
+	 * Active version
+	 *
+	 * @var bool
+	 */
+	private static $active_version = null;
+
+	/**
 	 * Init the package.
 	 *
 	 * Only initialize for WP 5.3 or greater.
@@ -43,6 +50,7 @@ class Package {
 	public static function init() {
 		$wordpress_minimum_met = version_compare( get_bloginfo( 'version' ), '5.3', '>=' );
 		if ( ! $wordpress_minimum_met ) {
+			self::$active_version = __( 'Inactive ', 'woocommerce-admin' );
 			return;
 		}
 
@@ -53,7 +61,8 @@ class Package {
 
 		// Avoid double initialization when the feature plugin is in use.
 		if ( defined( 'WC_ADMIN_VERSION_NUMBER' ) ) {
-			$update_version = new WC_Admin_Notes_Deactivate_Plugin();
+			self::$active_version = WC_ADMIN_VERSION_NUMBER;
+			$update_version       = new WC_Admin_Notes_Deactivate_Plugin();
 			if ( version_compare( WC_ADMIN_VERSION_NUMBER, self::VERSION, '<' ) ) {
 				$update_version::add_note();
 			} else {
@@ -67,6 +76,7 @@ class Package {
 		}
 
 		self::$package_active = true;
+		self::$active_version = self::VERSION;
 		FeaturePlugin::instance()->init();
 	}
 
@@ -85,7 +95,7 @@ class Package {
 	 * @return string
 	 */
 	public static function get_active_version() {
-		return self::$package_active ? self::VERSION : WC_ADMIN_VERSION_NUMBER;
+		return self::$active_version;
 	}
 
 	/**
