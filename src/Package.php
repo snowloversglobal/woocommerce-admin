@@ -48,8 +48,9 @@ class Package {
 	 * Only initialize for WP 5.3 or greater.
 	 */
 	public static function init() {
-		$wordpress_minimum_met = version_compare( get_bloginfo( 'version' ), '5.3', '>=' );
-		if ( ! $wordpress_minimum_met ) {
+		$feature_plugin_instance = FeaturePlugin::instance();
+		$satisfied_dependencies  = $feature_plugin_instance->has_satisfied_dependencies();
+		if ( ! $satisfied_dependencies ) {
 			return;
 		}
 
@@ -76,7 +77,7 @@ class Package {
 
 		self::$package_active = true;
 		self::$active_version = self::VERSION;
-		FeaturePlugin::instance()->init();
+		$feature_plugin_instance->init();
 	}
 
 	/**

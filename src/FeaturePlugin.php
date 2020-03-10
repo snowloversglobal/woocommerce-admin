@@ -254,7 +254,7 @@ class FeaturePlugin {
 	 *
 	 * @return bool
 	 */
-	protected function has_satisfied_dependencies() {
+	public function has_satisfied_dependencies() {
 		$dependency_errors = $this->get_dependency_errors();
 		return 0 === count( $dependency_errors );
 	}
