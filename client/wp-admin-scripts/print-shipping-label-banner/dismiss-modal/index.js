@@ -4,7 +4,6 @@
 import { __ } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
 import { Button, Modal } from '@wordpress/components';
-import { trackBannerEvent } from '../lib/banner-tracks';
 
 /**
  * Internal dependencies
@@ -17,7 +16,7 @@ export default class DismissModal extends Component {
 		onCloseAll();
 		// TODO: Maybe set counter for when to show again, or just show on next page load.
 
-		trackBannerEvent(
+		this.props.trackBannerEvent(
 			'shipping_banner_dismiss_modal_remind_me_later_click'
 		);
 	};
@@ -26,7 +25,9 @@ export default class DismissModal extends Component {
 		const { onCloseAll } = this.props;
 		// TODO: Persist something so the banner never appears again.
 		onCloseAll();
-		trackBannerEvent( 'shipping_banner_dismiss_modal_close_forever_click' );
+		this.props.trackBannerEvent(
+			'shipping_banner_dismiss_modal_close_forever_click'
+		);
 	};
 
 	render() {
