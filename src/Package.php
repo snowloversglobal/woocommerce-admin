@@ -50,7 +50,6 @@ class Package {
 	public static function init() {
 		$wordpress_minimum_met = version_compare( get_bloginfo( 'version' ), '5.3', '>=' );
 		if ( ! $wordpress_minimum_met ) {
-			self::$active_version = __( 'Inactive ', 'woocommerce-admin' );
 			return;
 		}
 
