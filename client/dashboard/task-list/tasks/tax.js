@@ -391,7 +391,7 @@ class Tax extends Component {
 		return (
 			<div className="woocommerce-task-tax">
 				<Card className="is-narrow">
-					{ false ? (
+					{ step ? (
 						<Stepper
 							isPending={
 								isPending ||
